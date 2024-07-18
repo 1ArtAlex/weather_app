@@ -49,6 +49,7 @@ weather_app/
     docker-compose up --build
     ```
     или
+
     ```sh
     flask run
     ```
