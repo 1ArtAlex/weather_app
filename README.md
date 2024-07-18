@@ -44,9 +44,13 @@ weather_app/
     git clone https://github.com/1ArtAlex/weather_app.git
     cd weather_app
     ```
-2. Запустите Docker:
+2. Запуск:
     ```sh
     docker-compose up --build
+    ```
+    или
+    ```sh
+    flask run
     ```
 3. Приложение будет доступно по адресу `http://localhost:5000`.
 
