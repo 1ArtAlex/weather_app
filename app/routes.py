@@ -7,6 +7,7 @@ from datetime import datetime
 import pytz
 from timezonefinder import TimezoneFinder
 import requests
+import psycopg2
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -34,14 +35,37 @@ def index():
     return render_template('index.html', form=form, weather=weather, search_history=search_history)
 
 
+conn_string = "host=localhost port=5432 dbname=postgres user=postgres password=I4seeyiseey"
+
+
+def get_db_connection():
+    conn = psycopg2.connect(conn_string)
+    return conn
+
+
 @app.route('/api/cities', methods=['GET'])
 def cities():
     q = request.args.get('q')
     if not q:
         return jsonify([])
-    geolocator = Nominatim(user_agent="weather_app")
-    locations = geolocator.geocode(q, exactly_one=False)
-    cities = [{'name': location.address} for location in locations] if locations else []
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    query = """
+    SELECT name
+    FROM city
+    WHERE name ILIKE %s
+    ORDER BY name
+    LIMIT 10;
+    """
+    cursor.execute(query, (f'%{q}%',))
+    results = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    cities = [{'name': row[0]} for row in results]
     return jsonify(cities)
 
 
