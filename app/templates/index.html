@@ -85,59 +85,60 @@
     {% endif %}
 
     <script>
-        $(document).ready(function() {
-            var citiesAutocomplete = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                remote: {
-                    url: '/api/cities?q=%QUERY',
-                    wildcard: '%QUERY'
-                }
-            });
-
-            var typeaheadInput = $('#city-input');
-            typeaheadInput.typeahead({
-                hint: true,
-                highlight: true,
-                minLength: 1
-            }, {
-                name: 'cities-autocomplete',
-                display: 'name',
-                source: citiesAutocomplete
-            });
-
-            $('#search-history').on('click', '.history-item', function() {
-                var selectedCity = $(this).text().trim();
-                typeaheadInput.typeahead('val', selectedCity);
-                $('#weather-form').submit();
-            });
-
-            function renderHistorySuggestions(data) {
-                if (data.length > 0) {
-                    var suggestions = '<span class="search-history-title">Вы искали ранее: </span>';
-                    var citiesToShow = data.slice(-3);
-                    for (var i = 0; i < citiesToShow.length; i++) {
-                        suggestions += '<span class="history-item">' + citiesToShow[i].city + '</span>';
-                        if (i < citiesToShow.length - 1) {
-                            suggestions += '; ';
-                        }
-                    }
-                    $('#search-history').html(suggestions);
-                }
+    $(document).ready(function() {
+        var citiesAutocomplete = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: '/api/cities?q=%QUERY',
+                wildcard: '%QUERY'
             }
-
-            $.ajax({
-                url: '/api/history',
-                method: 'GET',
-                success: function(data) {
-                    renderHistorySuggestions(data);
-                },
-                error: function() {
-                    console.error('Не удалось загрузить историю поиска.');
-                }
-            });
         });
-    </script>
+
+        var typeaheadInput = $('#city-input');
+        typeaheadInput.typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 1
+        }, {
+            name: 'cities-autocomplete',
+            display: 'name',
+            source: citiesAutocomplete
+        });
+
+        $('#search-history').on('click', '.history-item', function() {
+            var selectedCity = $(this).text().trim();
+            typeaheadInput.typeahead('val', selectedCity);
+            $('#weather-form').submit();
+        });
+
+        function renderHistorySuggestions(data) {
+            if (data.length > 0) {
+                var suggestions = '<span class="search-history-title">Вы искали ранее: </span>';
+                var citiesToShow = data.slice(-3);
+                for (var i = 0; i < citiesToShow.length; i++) {
+                    suggestions += '<span class="history-item">' + citiesToShow[i].city + '</span>';
+                    if (i < citiesToShow.length - 1) {
+                        suggestions += '; ';
+                    }
+                }
+                $('#search-history').html(suggestions);
+            }
+        }
+
+        $.ajax({
+            url: '/api/history',
+            method: 'GET',
+            success: function(data) {
+                renderHistorySuggestions(data);
+            },
+            error: function() {
+                console.error('Не удалось загрузить историю поиска.');
+            }
+        });
+    });
+</script>
+
 
 </body>
 </html>
