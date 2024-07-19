@@ -24,14 +24,10 @@ def test_weather_search(client):
     rv = client.post('/', data=dict(city='London'), follow_redirects=True)
     assert b'Weather in London' in rv.data
 
-    print("Response data:", rv.data)
-
 
 def test_history_api(client):
     client.post('/', data=dict(city='London'), follow_redirects=True)
     rv = client.get('/api/history')
     assert b'London' in rv.data
-
-    print("History API response:", rv.data)
 
 
